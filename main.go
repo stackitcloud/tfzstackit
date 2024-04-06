@@ -24,18 +24,20 @@ var (
 )
 
 const (
-	zoneTemplateStr = `resource "aws_route53_zone" "{{ .ID }}" {
-  name = "{{ .Domain }}"
+	zoneTemplateStr = `resource "stackit_dns_zone" "{{ .ID }}" {
+  project_id = var.project_id
+  name       = "{{ .Domain }}"
 }
 `
 	recordTemplateStr = `{{- range .Record.Comments }}
 # {{ . }}{{ end }}
-resource "aws_route53_record" "{{ .ResourceID }}" {
-  zone_id = {{ zoneReference .ZoneID }}
-  name    = "{{ .Record.Name }}"
-  type    = "{{ .Record.Type }}"
-  ttl     = "{{ .Record.TTL }}"
-  records = [{{ range $idx, $elem := .Record.Data }}{{ if $idx }}, {{ end }}{{ ensureQuoted $elem }}{{ end }}]
+resource "stackit_dns_record_set" "{{ .ResourceID }}" {
+  project_id = var.project_id
+  zone_id    = {{ zoneReference .ZoneID }}
+  name       = "{{ .Record.Name }}"
+  type       = "{{ .Record.Type }}"
+  ttl        = "{{ .Record.TTL }}"
+  records    = [{{ range $idx, $elem := .Record.Data }}{{ if $idx }}, {{ end }}{{ ensureQuoted $elem }}{{ end }}]
 }
 `
 )
@@ -281,12 +283,12 @@ func generateRecord(rr *dns.Token) dnsRecord {
 // sanitizeRecordName creates a normalized record name that Terraform accepts.
 // Terraform only allows letters, numbers, dashes and underscores, while DNS
 // records allow far more.
-// 1. All dots are replaced with -
-// 2. * is replaced by the string "wildcard"
-// 3. IDN records are cleaned using punycode conversion
-// 4. Any remaining non-allowed characters are replaced underscore
-// 5. If the start of the record name is not a valid Terraform identifier,
-//    then prepend an underscore.
+//  1. All dots are replaced with -
+//  2. * is replaced by the string "wildcard"
+//  3. IDN records are cleaned using punycode conversion
+//  4. Any remaining non-allowed characters are replaced underscore
+//  5. If the start of the record name is not a valid Terraform identifier,
+//     then prepend an underscore.
 func sanitizeRecordName(name string) string {
 	withoutDots := strings.Replace(strings.TrimRight(name, "."), ".", "-", -1)
 	withoutAsterisk := strings.Replace(withoutDots, "*", "wildcard", -1)
@@ -335,9 +337,9 @@ func ensureQuoted(s string) string {
 func (g *configGenerator) zoneReference(zone string) string {
 	switch g.syntax {
 	case Modern:
-		return fmt.Sprintf("aws_route53_zone.%s.zone_id", zone)
+		return fmt.Sprintf("stackit_dns_zone.%s.zone_id", zone)
 	case Legacy:
-		return fmt.Sprintf(`"${aws_route53_zone.%s.zone_id}"`, zone)
+		return fmt.Sprintf(`"${stackit_dns_zone.%s.zone_id}"`, zone)
 	default:
 		panic(fmt.Sprintf("Unknown mode %v", g.syntax))
 	}

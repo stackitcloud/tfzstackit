@@ -41,20 +41,22 @@ func TestGenerateRecordResource(t *testing.T) {
 			name: "basic",
 			expected: map[syntaxMode]string{
 				Modern: `# This is a test
-resource "aws_route53_record" "foo-bar-A" {
-  zone_id = aws_route53_zone.test-zone.zone_id
-  name    = "foo.bar"
-  type    = "A"
-  ttl     = "3600"
-  records = ["127.0.0.1"]
+resource "stackit_dns_record_set" "foo-bar-A" {
+  project_id = var.project_id
+  zone_id    = stackit_dns_zone.test-zone.zone_id
+  name       = "foo.bar"
+  type       = "A"
+  ttl        = "3600"
+  records    = ["127.0.0.1"]
 }`,
 				Legacy: `# This is a test
-resource "aws_route53_record" "foo-bar-A" {
-  zone_id = "${aws_route53_zone.test-zone.zone_id}"
-  name    = "foo.bar"
-  type    = "A"
-  ttl     = "3600"
-  records = ["127.0.0.1"]
+resource "stackit_dns_record_set" "foo-bar-A" {
+  project_id = var.project_id
+  zone_id    = "${stackit_dns_zone.test-zone.zone_id}"
+  name       = "foo.bar"
+  type       = "A"
+  ttl        = "3600"
+  records    = ["127.0.0.1"]
 }`,
 			},
 		},

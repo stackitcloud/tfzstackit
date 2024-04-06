@@ -1,8 +1,8 @@
 # tfz53 (previously knows as bzfttr53rdutil)
-A conversion utility for creating [Terraform](https://terraform.io) resource definitions for AWS Route53 from BIND zonefiles.
+A conversion utility for creating [Terraform](https://terraform.io) resource definitions for STACKIT DNS from BIND zonefiles.
 
 ## Installation
-Download the [latest release](https://github.com/carlpett/tfz53/releases/latest).
+Download the [latest release](https://github.com/Slm0n87/tfz53/releases/latest).
 
 ## Usage
 `tfz53 -domain <domain-name> [flags] > route53-domain.tf`
@@ -21,8 +21,8 @@ If you want to build from source, you will first need the Go tools. Instructions
 Once that is done, run 
 
 ```bash
-go get github.com/carlpett/tfz53
-cd $GOPATH/src/github.com/carlpett/tfz53
+go get github.com/Slm0n87/tfz53
+cd $GOPATH/src/github.com/Slm0n87/tfz53
 go build
 ```
 
