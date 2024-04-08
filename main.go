@@ -27,6 +27,7 @@ const (
 	zoneTemplateStr = `resource "stackit_dns_zone" "{{ .ID }}" {
   project_id = var.project_id
   name       = "{{ .Domain }}"
+  dns_name   = "{{ .Domain }}"
 }
 `
 	recordTemplateStr = `{{- range .Record.Comments }}

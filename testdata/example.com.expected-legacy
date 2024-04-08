@@ -1,6 +1,7 @@
 resource "stackit_dns_zone" "example-com" {
   project_id = var.project_id
   name       = "example.com"
+  dns_name   = "example.com"
 }
 
 #  wwwtest.example.com is another alias for www.example.com
