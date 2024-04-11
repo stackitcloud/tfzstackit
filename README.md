@@ -1,11 +1,11 @@
-# tfz53 (previously knows as bzfttr53rdutil)
+# tfzstackit (fork from tfz53 - previously knows as bzfttr53rdutil)
 A conversion utility for creating [Terraform](https://terraform.io) resource definitions for STACKIT DNS from BIND zonefiles.
 
 ## Installation
-Download the [latest release](https://github.com/Slm0n87/tfz53/releases/latest).
+Download the [latest release](https://github.com/Slm0n87/tfzstackit/releases/latest).
 
 ## Usage
-`tfz53 -domain <domain-name> [flags] > route53-domain.tf`
+`tfzstackit -domain <domain-name> [flags] > stackit-domain.tf`
 
 ## Flags
 | Name       | Description                                        | Default         |
@@ -21,8 +21,8 @@ If you want to build from source, you will first need the Go tools. Instructions
 Once that is done, run 
 
 ```bash
-go get github.com/Slm0n87/tfz53
-cd $GOPATH/src/github.com/Slm0n87/tfz53
+go get github.com/Slm0n87/tfzstackit
+cd $GOPATH/src/github.com/Slm0n87/tfzstackit
 go build
 ```
 

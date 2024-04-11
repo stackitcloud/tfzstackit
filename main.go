@@ -126,7 +126,7 @@ var (
 func main() {
 	flag.Parse()
 	if *showVersion {
-		fmt.Printf("tfz53 %s (%s/%s) (%s on %s)", Version, Branch, Revision, BuildUser, BuildDate)
+		fmt.Printf("tfzstackit %s (%s/%s) (%s on %s)", Version, Branch, Revision, BuildUser, BuildDate)
 		os.Exit(0)
 	}
 
@@ -260,7 +260,7 @@ func generateRecord(rr *dns.Token) dnsRecord {
 		// "long-[250 chars]" "-string"
 		// Below, we merge this into
 		// "long-[250 chars]\"\"-string"
-		// Which is then properly passed from Terraform to Route 53
+		// Which is then properly passed from Terraform to STACKIT DNS
 		parts := strings.Split(data, `" "`)
 		for pidx := range parts {
 			parts[pidx] = strings.TrimSpace(parts[pidx])

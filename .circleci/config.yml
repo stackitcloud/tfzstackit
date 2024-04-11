@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/github.com/carlpett/tfz53
+    working_directory: /go/src/github.com/Slm0n87/tfzstackit
     steps:
       - checkout
       - run: go get github.com/mitchellh/gox
@@ -19,7 +19,7 @@ jobs:
   release:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/github.com/carlpett/tfz53
+    working_directory: /go/src/github.com/Slm0n87/tfzstackit
     steps:
       - checkout
       - attach_workspace:

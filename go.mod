@@ -1,4 +1,4 @@
-module github.com/carlpett/tfz53
+module github.com/Slm0n87/tfzstackit
 
 require (
 	github.com/google/go-cmp v0.3.0
