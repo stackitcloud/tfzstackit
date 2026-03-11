@@ -27,5 +27,3 @@ go build
 ```
 
 You should now have a finished binary.
-
-This project uses `dep` to manage external dependencies. See the [Github repo](https://github.com/golang/dep) for more information.
