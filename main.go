@@ -14,15 +14,6 @@ import (
 	"golang.org/x/net/idna"
 )
 
-// Build information. Populated at build-time.
-var (
-	Version   string
-	Revision  string
-	Branch    string
-	BuildUser string
-	BuildDate string
-)
-
 const (
 	zoneTemplateStr = `resource "stackit_dns_zone" "{{ .ID }}" {
   project_id = var.project_id
@@ -119,16 +110,11 @@ var (
 	excludedTypesRaw = flag.String("exclude", "SOA,NS", "Comma-separated list of record types to ignore")
 	domain           = flag.String("domain", "", "Name of domain")
 	zoneFile         = flag.String("zone-file", "", "Path to zone file. Defaults to <domain>.zone in working dir")
-	showVersion      = flag.Bool("version", false, "Show version")
 	legacySyntax     = flag.Bool("legacy-syntax", false, "Generate legacy terraform syntax (versions older than 0.12)")
 )
 
 func main() {
 	flag.Parse()
-	if *showVersion {
-		fmt.Printf("tfzstackit %s (%s/%s) (%s on %s)", Version, Branch, Revision, BuildUser, BuildDate)
-		os.Exit(0)
-	}
 
 	if *domain == "" {
 		log.Fatal("Domain is required")
@@ -180,19 +166,14 @@ func (g *configGenerator) generateTerraformForZone(domain string, excludedTypes 
 
 func readZoneRecords(zoneReader io.Reader, excludedTypes map[uint16]bool) map[recordKey]dnsRecord {
 	records := make(map[recordKey]dnsRecord)
-	for rr := range dns.ParseZone(zoneReader, *domain, *zoneFile) {
-		if rr.Error != nil {
-			log.Printf("Error: %v\n", rr.Error)
-			continue
-		}
-
+	zp := dns.NewZoneParser(zoneReader, *domain, *zoneFile)
+	for rr, ok := zp.Next(); ok; rr, ok = zp.Next() {
 		recordType := rr.Header().Rrtype
-		isExcluded, ok := excludedTypes[recordType]
-		if ok && isExcluded {
+		if excludedTypes[recordType] {
 			continue
 		}
 
-		record := generateRecord(rr)
+		record := generateRecord(rr, zp.Comment())
 
 		key := recordKey{record.Name, record.Type}
 		if _, ok := records[key]; ok {
@@ -200,6 +181,9 @@ func readZoneRecords(zoneReader io.Reader, excludedTypes map[uint16]bool) map[re
 		}
 
 		records[key] = record
+	}
+	if err := zp.Err(); err != nil {
+		log.Printf("Error: %v\n", err)
 	}
 	return records
 }
@@ -235,7 +219,7 @@ func mergeRecords(a, b dnsRecord) dnsRecord {
 	return a
 }
 
-func generateRecord(rr *dns.Token) dnsRecord {
+func generateRecord(rr dns.RR, comment string) dnsRecord {
 	header := rr.Header()
 	name := strings.ToLower(header.Name)
 
@@ -269,8 +253,8 @@ func generateRecord(rr *dns.Token) dnsRecord {
 	}
 
 	comments := make([]string, 0)
-	if rr.Comment != "" {
-		comments = append(comments, strings.TrimLeft(rr.Comment, ";"))
+	if comment != "" {
+		comments = append(comments, strings.TrimLeft(comment, ";"))
 	}
 	return dnsRecord{
 		Name:     key.Name,
@@ -301,7 +285,7 @@ func sanitizeRecordName(name string) string {
 
 	id := strings.Map(func(r rune) rune {
 		if (r >= 'a' && r <= 'z') ||
-			(r >= 'A' && r <= 'z') ||
+			(r >= 'A' && r <= 'Z') ||
 			(r >= '0' && r <= '9') ||
 			(r == '-' || r == '_') {
 			return r

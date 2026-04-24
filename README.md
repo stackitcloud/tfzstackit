@@ -2,7 +2,7 @@
 A conversion utility for creating [Terraform](https://terraform.io) resource definitions for STACKIT DNS from BIND zonefiles.
 
 ## Installation
-Download the [latest release](https://github.com/Slm0n87/tfzstackit/releases/latest).
+Download the [latest release](https://github.com/stackitcloud/tfzstackit/releases/latest).
 
 ## Usage
 `tfzstackit -domain <domain-name> [flags] > stackit-domain.tf`
@@ -21,8 +21,8 @@ If you want to build from source, you will first need the Go tools. Instructions
 Once that is done, run 
 
 ```bash
-go get github.com/Slm0n87/tfzstackit
-cd $GOPATH/src/github.com/Slm0n87/tfzstackit
+git clone https://github.com/stackitcloud/tfzstackit
+cd tfzstackit
 go build
 ```
 
