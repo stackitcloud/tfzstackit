@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -91,6 +90,7 @@ func TestResourceNameSanitation(t *testing.T) {
 		{"#issue-2.github.com", "_issue-2-github-com"},
 		{"//issue-2.github.com", "__issue-2-github-com"},
 		{"12-issue-12.github.com", "_12-issue-12-github-com"},
+		{"foo[bar].example.com", "foo_bar_-example-com"},
 	}
 
 	for _, c := range cases {
@@ -116,7 +116,7 @@ func TestAcceptance(t *testing.T) {
 				if err != nil {
 					panic(err)
 				}
-				expected, err := ioutil.ReadFile(strings.Replace(n, ".zone", fmt.Sprintf(".expected-%v", syntax), 1))
+				expected, err := os.ReadFile(strings.Replace(n, ".zone", fmt.Sprintf(".expected-%v", syntax), 1))
 				if err != nil {
 					panic(err)
 				}
