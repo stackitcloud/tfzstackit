@@ -80,7 +80,7 @@ resource "stackit_dns_record_set" "long-example-com-TXT" {
   name       = "long.example.com."
   type       = "TXT"
   ttl        = "3600"
-  records    = ["over-255-characters=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\"\"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "more text which isn't joined to previous record"]
+  records    = ["\"over-255-characters=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \" \"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\"", "more text which isn't joined to previous record"]
 }
 
 #  mail.example.com is the mailserver for example.com
