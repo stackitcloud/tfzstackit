@@ -234,22 +234,25 @@ func generateRecord(rr dns.RR, comment string) dnsRecord {
 	}
 
 	if key.Type == "TXT" {
-		// TXT records can be up to 255 characters long in BIND format. Cloud
-		// DNS Terraform providers lets them be longer by joining them with
-		// a \"\" sequence. So we split by " " (which is inserted by miekg/dns
-		// unless already in the source file), trim away any spaces, then join
-		// by the escape sequence. So the following:
-		// foo IN TXT "long-[250 chars]-string"
-		// ... will be hava a data section like this before being adjusted:
-		// "long-[250 chars]" "-string"
-		// Below, we merge this into
-		// "long-[250 chars]\"\"-string"
-		// Which is then properly passed from Terraform to STACKIT DNS
+		// Two formats the STACKIT API accepts for TXT record values:
+		//   - Single chunk (≤255 chars): the bare content, e.g. v=spf1 mx -all
+		//   - Multi chunk (>255 chars):  BIND multi-string form with each chunk
+		//                                quoted and chunks separated by a space,
+		//                                e.g. "v=DKIM1; k=rsa; " "p=MIIB..."
+		// Long single-string values are rejected with "txt record content cannot
+		// contain invalid characters". miekg/dns hands us each TXT in BIND text
+		// form (always quoted), so we split on the chunk separator: a single
+		// part means a short TXT and we strip the outer quotes; multiple parts
+		// mean a long TXT and we keep the BIND form intact. %q then takes care
+		// of HCL escaping in both cases.
+		// Reference:
+		// https://docs.stackit.cloud/products/network/core-networking/dns/how-tos/add-custom-and-long-txt-record/
 		parts := strings.Split(data, `" "`)
-		for pidx := range parts {
-			parts[pidx] = strings.TrimSpace(parts[pidx])
+		if len(parts) > 1 {
+			data = fmt.Sprintf("%q", data)
+		} else {
+			data = fmt.Sprintf("%q", strings.TrimSuffix(strings.TrimPrefix(data, `"`), `"`))
 		}
-		data = strings.Join(parts, `\"\"`)
 	}
 
 	comments := make([]string, 0)
