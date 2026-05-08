@@ -40,7 +40,7 @@ jobs:
         run: go test ./...
 
       - name: Builds the project
-        run: go build -v ./...
+        run: go build -v -o ./tfzstackit .
 
       - name: Run binary
         run: ./tfzstackit -domain example.com -zone-file testdata/example.com.zone > /dev/null
