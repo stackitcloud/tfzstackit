@@ -8,7 +8,7 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"text/template"
+	"text/template" // nosemgrep: go.lang.security.audit.xss.import-text-template.import-text-template -- Terraform/HCL renderer, not HTML
 
 	"github.com/miekg/dns"
 	"golang.org/x/net/idna"
@@ -191,7 +191,7 @@ func readZoneRecords(zoneReader io.Reader, excludedTypes map[uint16]bool) map[re
 func (g *configGenerator) generateZoneResource(domain string, w io.Writer) (string, error) {
 	zoneName := strings.TrimRight(domain, ".")
 	data := zoneTemplateData{
-		ID:     strings.Replace(zoneName, ".", "-", -1),
+		ID:     strings.ReplaceAll(zoneName, ".", "-"),
 		Domain: zoneName,
 	}
 
@@ -275,8 +275,8 @@ func generateRecord(rr dns.RR, comment string) dnsRecord {
 //  5. If the start of the record name is not a valid Terraform identifier,
 //     then prepend an underscore.
 func sanitizeRecordName(name string) string {
-	withoutDots := strings.Replace(strings.TrimRight(name, "."), ".", "-", -1)
-	withoutAsterisk := strings.Replace(withoutDots, "*", "wildcard", -1)
+	withoutDots := strings.ReplaceAll(strings.TrimRight(name, "."), ".", "-")
+	withoutAsterisk := strings.ReplaceAll(withoutDots, "*", "wildcard")
 
 	punycoded, err := idna.Punycode.ToASCII(withoutAsterisk)
 	if err != nil {
