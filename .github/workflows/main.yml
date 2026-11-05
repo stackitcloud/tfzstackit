@@ -44,6 +44,8 @@ jobs:
 
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.15.0
 
       - name: Downloads the dependencies
         run: go mod download
