@@ -7,11 +7,10 @@
     ":gitSignOff"
   ],
   "dependencyDashboard": false,
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
-  ],
+  "osvVulnerabilityAlerts": true,
+  "minimumReleaseAge": "7 days",
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": null
+  },
   "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
 }
