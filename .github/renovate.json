@@ -4,14 +4,14 @@
     "group:allNonMajor",
     ":semanticCommits",
     ":semanticCommitTypeAll(chore)",
-    ":gitSignOff"
+    ":gitSignOff",
+    ":pinGitHubActionDigests"
   ],
   "dependencyDashboard": false,
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
-  ],
+  "osvVulnerabilityAlerts": true,
+  "minimumReleaseAge": "7 days",
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": null
+  },
   "postUpdateOptions": ["gomodTidy", "gomodUpdateImportPaths"]
 }
